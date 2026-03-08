@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Consulta de Movimientos - Banco</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; line-height: 1.6; color: #333; }
+        .card { border: 1px solid #ddd; padding: 20px; border-radius: 8px; background: #f9f9f9; }
+        input { padding: 8px; margin: 5px 0; width: 100%; box-sizing: border-box; }
+        button { background: #007bff; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    </style>
+</head>
+<body>
+<h1>🏦 Consulta de Movimientos</h1>
+<div class="card">
+    <label>Número de Cuenta:</label>
+    <input type="text" id="account" placeholder="Ej: 495878">
+    <label>Fecha Inicio:</label>
+    <input type="datetime-local" id="start">
+    <label>Fecha Fin:</label>
+    <input type="datetime-local" id="end">
+    <button onclick="consultar()">Consultar Historial</button>
+</div>
+<div id="result"></div>
+
+<script>
+    async function consultar() {
+        const acc = document.getElementById('account').value;
+        const start = document.getElementById('start').value + ":00";
+        const end = document.getElementById('end').value + ":00";
+        const resDiv = document.getElementById('result');
+
+        try {
+            const response = await fetch(`/api/v1/movements/filter?accountNumber=${acc}&startDate=${start}&endDate=${end}`);
+            const data = await response.json();
+
+            let html = '<table><tr><th>Fecha</th><th>Tipo</th><th>Valor</th><th>Saldo</th></tr>';
+            data.forEach(m => {
+                html += `<tr><td>${m.date}</td><td>${m.type}</td><td>$${m.value}</td><td>$${m.balance}</td></tr>`;
+            });
+            resDiv.innerHTML = html + '</table>';
+        } catch (e) {
+            resDiv.innerHTML = "<p style='color:red'>Error al consultar. Revisa la consola.</p>";
+        }
+    }
+</script>
+</body>
+</html>

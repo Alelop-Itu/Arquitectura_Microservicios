@@ -19,4 +19,4 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/BaseDatos
       SPRING_DATASOURCE_USERNAME: user_bank
-      SPRING_DATASOURCE_PASSWORD: password123
+      SPRING_DATASOURCE_PASSWORD: 963
