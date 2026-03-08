@@ -35,4 +35,17 @@ public class MovementController {
         log.info("Consultando los movimientos");
         return movementService.getAllMovements();
     }
+
+    @PutMapping("/{id}")
+    public Mono<MovementDTO> update(@PathVariable Long id, @Valid @RequestBody MovementDTO dto) {
+        log.info("Actualizando movimiento con ID: {}", id);
+        return movementService.update(id, dto); // Verbo PUT para modificación
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public Mono<Void> delete(@PathVariable Long id) {
+        log.info("Eliminando movimiento con ID: {}", id);
+        return movementService.delete(id);
+    }
 }

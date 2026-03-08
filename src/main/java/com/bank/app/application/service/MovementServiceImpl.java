@@ -90,12 +90,20 @@ public class MovementServiceImpl implements MovementService {
 
     @Override
     public Mono<MovementDTO> update(Long id, MovementDTO dto) {
-        return Mono.empty();
+        return Mono.fromCallable(() -> {
+            Movement m = movementRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Movimiento no encontrado"));
+            m.setType(dto.getType());
+            m.setValue(dto.getValue());
+            movementRepository.save(m);
+            return dto;
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     @Override
     public Mono<Void> delete(Long id) {
-        return Mono.empty();
+        return Mono.fromRunnable(() -> movementRepository.deleteById(id))
+                .subscribeOn(Schedulers.boundedElastic()).then();
     }
 }
 

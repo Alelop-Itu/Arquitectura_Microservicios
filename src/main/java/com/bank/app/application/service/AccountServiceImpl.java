@@ -3,6 +3,7 @@ package com.bank.app.application.service;
 import com.bank.app.application.dto.AccountDTO;
 import com.bank.app.domain.model.Account;
 import com.bank.app.domain.repository.AccountRepository;
+import com.bank.app.domain.repository.CustomerRepository;
 import com.bank.app.domain.service.AccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import reactor.core.scheduler.Schedulers;
 public class AccountServiceImpl implements AccountService {
 
     private final AccountRepository accountRepository;
+    private final CustomerRepository customerRepository;
 
     @Override
     public Mono<AccountDTO> save(AccountDTO dto) {
@@ -24,6 +26,10 @@ public class AccountServiceImpl implements AccountService {
             account.setType(dto.getType());
             account.setBalance(dto.getBalance());
             account.setStatus(dto.getStatus());
+
+            customerRepository.findById(dto.getCustomerId())
+                    .ifPresent(account::setCustomer);
+
             accountRepository.save(account);
             return dto;
         }).subscribeOn(Schedulers.boundedElastic());
@@ -53,7 +59,9 @@ public class AccountServiceImpl implements AccountService {
                     .orElseThrow(() -> new RuntimeException("Account not found"));
             account.setType(dto.getType());
             account.setStatus(dto.getStatus());
-            return new AccountDTO(account.getNumber(), account.getType(), account.getBalance(), account.getStatus(), null);
+            account.setBalance(dto.getBalance());
+            accountRepository.save(account);
+            return dto;
         }).subscribeOn(Schedulers.boundedElastic());
     }
 

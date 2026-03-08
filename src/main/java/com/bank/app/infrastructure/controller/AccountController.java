@@ -28,4 +28,15 @@ public class AccountController {
     public Mono<AccountDTO> getByNumber(@PathVariable String number) {
         return accountService.findByNumber(number);
     }
+
+    @PutMapping("/{number}")
+    public Mono<AccountDTO> update(@PathVariable String number, @Valid @RequestBody AccountDTO dto) {
+        return accountService.update(number, dto);
+    }
+
+    @DeleteMapping("/{number}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public Mono<Void> delete(@PathVariable String number) {
+        return accountService.delete(number);
+    }
 }

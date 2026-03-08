@@ -33,4 +33,16 @@ public class CustomerController {
     public Mono<CustomerDTO> getById(@PathVariable Long id) {
         return customerService.findById(id);
     }
+
+    @PutMapping("/{id}")
+    public Mono<CustomerDTO> update(@PathVariable Long id, @Valid @RequestBody CustomerDTO dto) {
+        return customerService.update(id, dto);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public Mono<Void> delete(@PathVariable Long id) {
+        log.info("Eliminando cliente con ID: {}", id);
+        return customerService.delete(id);
+    }
 }
