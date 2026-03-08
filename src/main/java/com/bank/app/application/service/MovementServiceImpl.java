@@ -91,11 +91,38 @@ public class MovementServiceImpl implements MovementService {
     @Override
     public Mono<MovementDTO> update(Long id, MovementDTO dto) {
         return Mono.fromCallable(() -> {
-            Movement m = movementRepository.findById(id)
+
+            Movement movement = movementRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Movimiento no encontrado"));
-            m.setType(dto.getType());
-            m.setValue(dto.getValue());
-            movementRepository.save(m);
+            Account account = movement.getAccount();
+            BigDecimal currentBalance = account.getBalance();
+
+
+            if ("DEBIT".equalsIgnoreCase(movement.getType())) {
+                currentBalance = currentBalance.add(movement.getValue());
+            } else {
+                currentBalance = currentBalance.subtract(movement.getValue());
+            }
+
+            BigDecimal newValue = dto.getValue();
+            if ("DEBIT".equalsIgnoreCase(dto.getType())) {
+                if (currentBalance.compareTo(newValue) < 0) {
+                    throw new InsufficientBalanceException("Saldo no disponible"); // Validación F3
+                }
+                currentBalance = currentBalance.subtract(newValue);
+            } else {
+                currentBalance = currentBalance.add(newValue);
+            }
+
+            account.setBalance(currentBalance);
+            accountRepository.save(account);
+
+            movement.setType(dto.getType());
+            movement.setValue(newValue);
+            movement.setBalance(currentBalance);
+            movementRepository.save(movement);
+
+            dto.setBalance(currentBalance);
             return dto;
         }).subscribeOn(Schedulers.boundedElastic());
     }
