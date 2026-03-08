@@ -8,8 +8,12 @@ import reactor.core.publisher.Mono;
 
 public interface MovementService {
     Mono<MovementDTO> createMovement(MovementDTO movementDto);
+
     Flux<MovementDTO> getAllMovements();
+
     Mono<MovementDTO> findById(Long id);
+
     Mono<MovementDTO> update(Long id, MovementDTO dto);
+
     Mono<Void> delete(Long id);
 }

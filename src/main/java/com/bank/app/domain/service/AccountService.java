@@ -6,8 +6,12 @@ import reactor.core.publisher.Mono;
 
 public interface AccountService {
     Mono<AccountDTO> save(AccountDTO dto);
+
     Flux<AccountDTO> findAll();
+
     Mono<AccountDTO> findByNumber(String number);
+
     Mono<AccountDTO> update(String number, AccountDTO dto);
+
     Mono<Void> delete(String number);
 }
