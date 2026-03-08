@@ -27,34 +27,28 @@ public class MovementServiceImpl implements MovementService {
     private final AccountRepository accountRepository;
 
     @Override
-    @Transactional // Asegura que si algo falla, no se guarde nada a medias (F2)
+    @Transactional
     public Mono<MovementDTO> createMovement(MovementDTO dto) {
         return Mono.fromCallable(() -> {
-            log.info("Procesando {} de {} para cuenta: {}", dto.getType(), dto.getValue(), dto.getAccountNumber());
-
-
             Account account = accountRepository.findByNumber(dto.getAccountNumber())
                     .orElseThrow(() -> new RuntimeException("Cuenta no encontrada"));
 
-            BigDecimal currentBalance = account.getInitialBalance();
+            BigDecimal currentBalance = account.getBalance();
             BigDecimal amount = dto.getValue();
             BigDecimal newBalance;
 
 
-            if ("RETIRAR".equalsIgnoreCase(dto.getType())) {
+            if ("DEBIT".equalsIgnoreCase(dto.getType())) {
                 newBalance = currentBalance.subtract(amount);
-
-
                 if (newBalance.compareTo(BigDecimal.ZERO) < 0) {
-                    log.warn("Saldo insuficiente en cuenta {}", dto.getAccountNumber());
-                    throw new InsufficientBalanceException();
+                    throw new InsufficientBalanceException("Saldo no disponible");
                 }
             } else {
                 newBalance = currentBalance.add(amount);
             }
 
 
-            account.setInitialBalance(newBalance);
+            account.setBalance(newBalance);
             accountRepository.save(account);
 
 
@@ -76,11 +70,32 @@ public class MovementServiceImpl implements MovementService {
         return Flux.defer(() -> Flux.fromIterable(movementRepository.findAll()))
                 .map(m -> {
                     MovementDTO dto = new MovementDTO();
-                    dto.setAccountNumber(m.getAccount().getNumber());
+                    dto.setId(m.getId());
+                    dto.setDate(m.getDate());
                     dto.setType(m.getType());
                     dto.setValue(m.getValue());
                     dto.setBalance(m.getBalance());
+                    dto.setAccountNumber(m.getAccount().getNumber());
                     return dto;
                 }).subscribeOn(Schedulers.boundedElastic());
     }
+
+    @Override
+    public Mono<MovementDTO> findById(Long id) {
+        return Mono.fromCallable(() -> movementRepository.findById(id))
+                .flatMap(opt -> opt.map(m -> Mono.just(new MovementDTO(m.getId(), m.getDate(), m.getType(), m.getValue(), m.getBalance(), m.getAccount().getNumber())))
+                        .orElse(Mono.empty()))
+                .subscribeOn(Schedulers.boundedElastic());
+    }
+
+    @Override
+    public Mono<MovementDTO> update(Long id, MovementDTO dto) {
+        return Mono.empty();
+    }
+
+    @Override
+    public Mono<Void> delete(Long id) {
+        return Mono.empty();
+    }
 }
+

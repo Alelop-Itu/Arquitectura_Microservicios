@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import reactor.core.publisher.Mono;
 import java.util.Map;
 
-@RestControllerAdvice // Indica que esta clase capturará excepciones de todos los controladores
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(InsufficientBalanceException.class)
