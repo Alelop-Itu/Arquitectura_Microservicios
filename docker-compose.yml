@@ -9,6 +9,8 @@ services:
       POSTGRES_DB: BaseDatos
     ports:
       - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
   app:
     build: .
@@ -17,6 +19,10 @@ services:
     depends_on:
       - db
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/BaseDatos
-      SPRING_DATASOURCE_USERNAME: user_bank
-      SPRING_DATASOURCE_PASSWORD: 963
+      - DB_HOST=db
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/BaseDatos
+      - SPRING_DATASOURCE_USERNAME=user_bank
+      - SPRING_DATASOURCE_PASSWORD=963
+
+volumes:
+  postgres_data:

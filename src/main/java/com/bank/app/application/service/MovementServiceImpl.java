@@ -61,7 +61,7 @@ public class MovementServiceImpl implements MovementService {
             Movement savedMovement = movementRepository.save(movement);
             dto.setId(savedMovement.getId());
             dto.setDate(savedMovement.getDate());
-            dto.setBalance(newBalance);
+            dto.setBalance(savedMovement.getBalance());
             return dto;
         }).subscribeOn(Schedulers.boundedElastic());
     }
@@ -140,10 +140,11 @@ public class MovementServiceImpl implements MovementService {
                         movementRepository.findByAccount_NumberAndDateBetween(accountNumber, start, end)))
                 .map(m -> {
                     MovementDTO dto = new MovementDTO();
+                    dto.setId(m.getId());
                     dto.setDate(m.getDate());
                     dto.setAccountNumber(m.getAccount().getNumber());
-                    dto.setType(m.getType()); // "DEBIT" o "CREDIT"
-                    dto.setBalance(m.getBalance()); // Saldo disponible tras el movimiento
+                    dto.setType(m.getType());
+                    dto.setBalance(m.getBalance());
                     dto.setValue(m.getValue());
                     return dto;
                 }).subscribeOn(Schedulers.boundedElastic());

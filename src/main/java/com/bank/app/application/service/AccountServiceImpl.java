@@ -30,7 +30,8 @@ public class AccountServiceImpl implements AccountService {
 
             Customer customer = customerRepository.findById(dto.getCustomerId())
                     .orElseThrow(() -> new RuntimeException("Error: El cliente con ID " + dto.getCustomerId() + " no existe."));
-            account.setCustomer(customer);   customerRepository.findById(dto.getCustomerId())
+            account.setCustomer(customer);
+            customerRepository.findById(dto.getCustomerId())
                     .ifPresent(account::setCustomer);
 
             accountRepository.save(account);

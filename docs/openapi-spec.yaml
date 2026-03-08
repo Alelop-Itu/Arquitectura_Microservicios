@@ -1,0 +1,145 @@
+openapi: 3.0.0
+info:
+  title: Bank API
+  version: 1.0.0
+  description: API para gestión de clientes, cuentas y movimientos bancarios.
+servers:
+  - url: '{{base_url}}'
+paths:
+  /customers:
+    post:
+      summary: POST Crear Jose Lema
+      responses:
+        '201':
+          description: Creado con éxito
+      tags:
+        - Postman
+        - Customers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                gender:
+                  type: string
+                identification:
+                  type: string
+                  format: utc-millisec
+                address:
+                  type: string
+                phone:
+                  type: string
+                  format: utc-millisec
+                password:
+                  type: string
+                  format: utc-millisec
+                status:
+                  type: boolean
+            example:
+              name: Jose Lema
+              gender: Masculino
+              identification: '1712345601'
+              address: Otavalo sn y principal
+              phone: '098254785'
+              password: '1234'
+              status: true
+  /accounts:
+    post:
+      summary: POST Jose Lema - Ahorros
+      responses:
+        '201':
+          description: Creado con éxito
+      tags:
+        - Postman
+        - Accounts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                number:
+                  type: string
+                  format: color
+                type:
+                  type: string
+                balance:
+                  type: integer
+                status:
+                  type: boolean
+                customerId:
+                  type: integer
+            example:
+              number: '478758'
+              type: Ahorros
+              balance: 2000
+              status: true
+              customerId: 8
+  /movements:
+    post:
+      summary: POST retiro 478758
+      responses:
+        '201':
+          description: Creado con éxito
+      tags:
+        - Postman
+        - Movements
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                accountNumber:
+                  type: string
+                  format: color
+                type:
+                  type: string
+                value:
+                  type: integer
+            example:
+              accountNumber: '478758'
+              type: DEBIT
+              value: 575
+  /movements/filter:
+    get:
+      summary: GET Movimientos fecha y usuario 225487
+      parameters:
+        - name: accountNumber
+          in: query
+          required: false
+          deprecated: false
+          schema: { }
+          example: '225487'
+        - name: startDate
+          in: query
+          required: false
+          deprecated: false
+          schema: { }
+          example: '2024-01-01T00:00:00'
+        - name: endDate
+          in: query
+          required: false
+          deprecated: false
+          schema: { }
+          example: '2026-12-31T23:59:59'
+      responses:
+        '200':
+          description: Consulta exitosa
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+      tags:
+        - Postman
+        - List movements
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object

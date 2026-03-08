@@ -2,49 +2,89 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Consulta de Movimientos - Banco</title>
+    <title>Banca Virtual - Movimientos</title>
     <style>
-        body { font-family: sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; line-height: 1.6; color: #333; }
-        .card { border: 1px solid #ddd; padding: 20px; border-radius: 8px; background: #f9f9f9; }
-        input { padding: 8px; margin: 5px 0; width: 100%; box-sizing: border-box; }
-        button { background: #007bff; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            display: flex;
+            background: #fafafa;
+        }
+
+        .sidebar {
+            width: 240px;
+            background: #f0f0f0;
+            height: 100vh;
+            border-right: 1px solid #ddd;
+        }
+
+        .menu-item {
+            padding: 15px 20px;
+            color: #002d72;
+            cursor: pointer;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .menu-item.active {
+            background: #ffdd00;
+            font-weight: bold;
+            border-left: 5px solid #002d72;
+        }
+
+        .content {
+            flex: 1;
+            padding: 40px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #002d72;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #001a45;
+        }
     </style>
 </head>
 <body>
-<h1>🏦 Consulta de Movimientos</h1>
-<div class="card">
-    <label>Número de Cuenta:</label>
-    <input type="text" id="account" placeholder="Ej: 495878">
-    <label>Fecha Inicio:</label>
-    <input type="datetime-local" id="start">
-    <label>Fecha Fin:</label>
-    <input type="datetime-local" id="end">
-    <button onclick="consultar()">Consultar Historial</button>
+<div class="sidebar">
+    <div class="menu-item active">TRANSFERENCIAS</div>
+    <div class="menu-item">MOVIMIENTOS</div>
+    <div class="menu-item">CONFIGURACIÓN</div>
 </div>
-<div id="result"></div>
-
-<script>
-    async function consultar() {
-        const acc = document.getElementById('account').value;
-        const start = document.getElementById('start').value + ":00";
-        const end = document.getElementById('end').value + ":00";
-        const resDiv = document.getElementById('result');
-
-        try {
-            const response = await fetch(`/api/v1/movements/filter?accountNumber=${acc}&startDate=${start}&endDate=${end}`);
-            const data = await response.json();
-
-            let html = '<table><tr><th>Fecha</th><th>Tipo</th><th>Valor</th><th>Saldo</th></tr>';
-            data.forEach(m => {
-                html += `<tr><td>${m.date}</td><td>${m.type}</td><td>$${m.value}</td><td>$${m.balance}</td></tr>`;
-            });
-            resDiv.innerHTML = html + '</table>';
-        } catch (e) {
-            resDiv.innerHTML = "<p style='color:red'>Error al consultar. Revisa la consola.</p>";
-        }
-    }
-</script>
+<div class="content">
+    <div class="card">
+        <h2 style="color: #002d72;">Nueva Transferencia</h2>
+        <label>Cuenta de Origen</label>
+        <input readonly type="text" value="225487">
+        <label>Monto (USD)</label>
+        <input id="amount" placeholder="0.00" type="number">
+        <label>Descripción</label>
+        <input placeholder="Ej: Pago de servicios" type="text">
+        <button onclick="alert('Funcionalidad conectada al API')">EJECUTAR</button>
+    </div>
+</div>
 </body>
 </html>
