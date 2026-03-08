@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -24,7 +25,7 @@ public class Movement {
 
     private String type;
 
-    @Column(name = "movement_value", nullable = false)
+    @Column(name = "value", nullable = false)
     private BigDecimal value;
 
     @Column(nullable = false)
@@ -33,6 +34,7 @@ public class Movement {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id", nullable = false)
     @JsonIgnoreProperties("customer")
+    @ToString.Exclude
     private Account account;
 
     @PrePersist

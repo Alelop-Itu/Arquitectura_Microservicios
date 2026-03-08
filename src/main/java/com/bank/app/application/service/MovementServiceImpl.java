@@ -58,8 +58,9 @@ public class MovementServiceImpl implements MovementService {
             movement.setValue(amount);
             movement.setBalance(newBalance);
             movement.setAccount(account);
-            movementRepository.save(movement);
-
+            Movement savedMovement = movementRepository.save(movement);
+            dto.setId(savedMovement.getId());
+            dto.setDate(savedMovement.getDate());
             dto.setBalance(newBalance);
             return dto;
         }).subscribeOn(Schedulers.boundedElastic());
@@ -131,6 +132,21 @@ public class MovementServiceImpl implements MovementService {
     public Mono<Void> delete(Long id) {
         return Mono.fromRunnable(() -> movementRepository.deleteById(id))
                 .subscribeOn(Schedulers.boundedElastic()).then();
+    }
+
+    @Override
+    public Flux<MovementDTO> getMovementsByAccountAndDates(String accountNumber, LocalDateTime start, LocalDateTime end) {
+        return Flux.defer(() -> Flux.fromIterable(
+                        movementRepository.findByAccount_NumberAndDateBetween(accountNumber, start, end)))
+                .map(m -> {
+                    MovementDTO dto = new MovementDTO();
+                    dto.setDate(m.getDate());
+                    dto.setAccountNumber(m.getAccount().getNumber());
+                    dto.setType(m.getType()); // "DEBIT" o "CREDIT"
+                    dto.setBalance(m.getBalance()); // Saldo disponible tras el movimiento
+                    dto.setValue(m.getValue());
+                    return dto;
+                }).subscribeOn(Schedulers.boundedElastic());
     }
 }
 

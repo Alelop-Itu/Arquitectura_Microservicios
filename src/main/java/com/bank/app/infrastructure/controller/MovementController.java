@@ -7,10 +7,13 @@ import com.bank.app.domain.service.MovementService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/v1/movements")
@@ -48,4 +51,16 @@ public class MovementController {
         log.info("Eliminando movimiento con ID: {}", id);
         return movementService.delete(id);
     }
+
+   /* @GetMapping("/filter")
+    public Flux<MovementDTO> getFilteredMovements(
+            @RequestParam String accountNumber,
+            @RequestParam String startDate,
+            @RequestParam String endDate) {
+
+        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
+
+            return movementService.getMovementsByAccountAndDates(accountNumber, startDate, endDate);
+    }*/
 }

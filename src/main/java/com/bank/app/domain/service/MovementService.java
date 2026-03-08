@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDateTime;
+
 public interface MovementService {
     Mono<MovementDTO> createMovement(MovementDTO movementDto);
 
@@ -16,4 +18,6 @@ public interface MovementService {
     Mono<MovementDTO> update(Long id, MovementDTO dto);
 
     Mono<Void> delete(Long id);
+
+    Flux<MovementDTO> getMovementsByAccountAndDates(String accountNumber, LocalDateTime start, LocalDateTime end);
 }
