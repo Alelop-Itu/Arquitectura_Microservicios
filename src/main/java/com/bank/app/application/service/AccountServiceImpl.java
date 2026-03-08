@@ -2,6 +2,7 @@ package com.bank.app.application.service;
 
 import com.bank.app.application.dto.AccountDTO;
 import com.bank.app.domain.model.Account;
+import com.bank.app.domain.model.Customer;
 import com.bank.app.domain.repository.AccountRepository;
 import com.bank.app.domain.repository.CustomerRepository;
 import com.bank.app.domain.service.AccountService;
@@ -27,7 +28,9 @@ public class AccountServiceImpl implements AccountService {
             account.setBalance(dto.getBalance());
             account.setStatus(dto.getStatus());
 
-            customerRepository.findById(dto.getCustomerId())
+            Customer customer = customerRepository.findById(dto.getCustomerId())
+                    .orElseThrow(() -> new RuntimeException("Error: El cliente con ID " + dto.getCustomerId() + " no existe."));
+            account.setCustomer(customer);   customerRepository.findById(dto.getCustomerId())
                     .ifPresent(account::setCustomer);
 
             accountRepository.save(account);

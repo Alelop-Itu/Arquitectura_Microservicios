@@ -28,6 +28,7 @@ public class CustomerServiceImpl implements CustomerService {
             customer.setPassword(dto.getPassword());
             customer.setStatus(dto.getStatus());
             customerRepository.save(customer);
+            dto.setId(customer.getId());
             return dto;
         }).subscribeOn(Schedulers.boundedElastic());
     }
