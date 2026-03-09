@@ -1,6 +1,6 @@
 # 🏦 Bank API - Prueba Técnica (Junior)
 
-API Reactiva para gestión de clientes, cuentas y movimientos bancarios desarrollada para el ITQ.
+API Reactiva para gestión de clientes, cuentas y movimientos bancarios.
 
 ## 🚀 Tecnologías
 - **Java 17** & **Spring Boot 3.5**
