@@ -2,89 +2,90 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Banca Virtual - Movimientos</title>
+    <title>Banca Virtual - Dashboard Técnico</title>
     <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            margin: 0;
-            display: flex;
-            background: #fafafa;
-        }
-
-        .sidebar {
-            width: 240px;
-            background: #f0f0f0;
-            height: 100vh;
-            border-right: 1px solid #ddd;
-        }
-
-        .menu-item {
-            padding: 15px 20px;
-            color: #002d72;
-            cursor: pointer;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .menu-item.active {
-            background: #ffdd00;
-            font-weight: bold;
-            border-left: 5px solid #002d72;
-        }
-
-        .content {
-            flex: 1;
-            padding: 40px;
-        }
-
-        .card {
-            background: white;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            max-width: 500px;
-        }
-
-        input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            background: #002d72;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        button:hover {
-            background: #001a45;
-        }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; background: #fafafa; }
+        .sidebar { width: 240px; background: #f0f0f0; height: 100vh; border-right: 1px solid #ddd; }
+        .menu-item { padding: 15px 20px; color: #002d72; cursor: pointer; border-bottom: 1px solid #e0e0e0; }
+        .menu-item.active { background: #ffdd00; font-weight: bold; border-left: 5px solid #002d72; }
+        .content { flex: 1; padding: 40px; }
+        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { text-align: left; padding: 12px; border-bottom: 2px solid #ffdd00; color: #002d72; background: #f9f9f9; }
+        td { padding: 12px; border-bottom: 1px solid #eee; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
+
 <div class="sidebar">
-    <div class="menu-item active">TRANSFERENCIAS</div>
-    <div class="menu-item">MOVIMIENTOS</div>
-    <div class="menu-item">CONFIGURACIÓN</div>
+    <div class="menu-item active" onclick="showTab('customers')">CLIENTES (F1)</div>
+    <div class="menu-item" onclick="showTab('accounts')">CUENTAS (F1)</div>
+    <div class="menu-item" onclick="showTab('movements')">MOVIMIENTOS (F2)</div>
 </div>
+
 <div class="content">
-    <div class="card">
-        <h2 style="color: #002d72;">Nueva Transferencia</h2>
-        <label>Cuenta de Origen</label>
-        <input readonly type="text" value="225487">
-        <label>Monto (USD)</label>
-        <input id="amount" placeholder="0.00" type="number">
-        <label>Descripción</label>
-        <input placeholder="Ej: Pago de servicios" type="text">
-        <button onclick="alert('Funcionalidad conectada al API')">EJECUTAR</button>
+    <div id="tab-customers" class="card">
+        <h2 style="color: #002d72;">Clientes Registrados</h2>
+        <table>
+            <thead><tr><th>Nombre</th><th>Identificación</th><th>Estado</th></tr></thead>
+            <tbody id="body-customers"></tbody>
+        </table>
+    </div>
+
+    <div id="tab-accounts" class="card hidden">
+        <h2 style="color: #002d72;">Cuentas Bancarias</h2>
+        <table>
+            <thead><tr><th>Número</th><th>Tipo</th><th>Saldo Inicial</th><th>Estado</th></tr></thead>
+            <tbody id="body-accounts"></tbody>
+        </table>
+    </div>
+
+    <div id="tab-movements" class="card hidden">
+        <h2 style="color: #002d72;">Historial de Movimientos</h2>
+        <table>
+            <thead><tr><th>Fecha</th><th>Tipo</th><th>Valor</th><th>Saldo Disponible</th></tr></thead>
+            <tbody id="body-movements"></tbody>
+        </table>
     </div>
 </div>
+
+<script>
+    const BASE_URL = 'http://localhost:8080/api/v1';
+
+    function showTab(tabName) {
+        // Alternar visibilidad
+        document.querySelectorAll('.card').forEach(c => c.classList.add('hidden'));
+        document.getElementById('tab-' + tabName).classList.remove('hidden');
+
+        // Alternar menú activo
+        document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+
+        // Cargar datos
+        fetchData(tabName);
+    }
+
+    function fetchData(endpoint) {
+        fetch(`${BASE_URL}/${endpoint}`)
+            .then(res => res.json())
+            .then(data => {
+                const body = document.getElementById(`body-${endpoint}`);
+                body.innerHTML = '';
+                data.forEach(item => {
+                    if(endpoint === 'customers') {
+                        body.innerHTML += `<tr><td>${item.name}</td><td>${item.identification}</td><td>${item.status?'Activo':'Inactivo'}</td></tr>`;
+                    } else if(endpoint === 'accounts') {
+                        body.innerHTML += `<tr><td>${item.accountNumber}</td><td>${item.type}</td><td>$${item.initialBalance}</td><td>${item.status}</td></tr>`;
+                    } else if(endpoint === 'movements') {
+                        body.innerHTML += `<tr><td>${item.date}</td><td>${item.type}</td><td>${item.value}</td><td>$${item.balance}</td></tr>`;
+                    }
+                });
+            });
+    }
+
+    // Carga inicial
+    document.addEventListener('DOMContentLoaded', () => fetchData('customers'));
+</script>
 </body>
 </html>
