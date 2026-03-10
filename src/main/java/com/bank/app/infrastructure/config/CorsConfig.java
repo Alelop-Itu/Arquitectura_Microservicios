@@ -9,7 +9,9 @@ public class CorsConfig implements WebFluxConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/v1/**")
-                .allowedOrigins("*") // Permite consultas desde cualquier origen
-                .allowedMethods("GET", "POST", "PUT", "DELETE");
+                .allowedOriginPatterns("*") // Esto es clave para el origen "null"
+                .allowedMethods("*")
+                .allowedHeaders("*");
     }
 }
+

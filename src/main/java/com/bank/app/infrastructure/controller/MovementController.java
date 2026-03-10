@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 
-
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/v1/movements")
 @RequiredArgsConstructor
