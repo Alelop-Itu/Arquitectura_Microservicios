@@ -51,23 +51,14 @@
 </div>
 
 <script>
-    const BASE_URL = 'http://localhost:8080/api/v1';
-
-    function showTab(tabName) {
-        // Alternar visibilidad
-        document.querySelectorAll('.card').forEach(c => c.classList.add('hidden'));
-        document.getElementById('tab-' + tabName).classList.remove('hidden');
-
-        // Alternar menú activo
-        document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
-        event.currentTarget.classList.add('active');
-
-        // Cargar datos
-        fetchData(tabName);
-    }
+    const CONFIG = {
+        API_BASE_URL: window.location.origin.includes('localhost')
+            ? 'http://localhost:8080/api/v1'
+            : '/api/v1' // Ruta relativa
+    };
 
     function fetchData(endpoint) {
-        fetch(`${BASE_URL}/${endpoint}`)
+        fetch(`${CONFIG.API_BASE_URL}/${endpoint}`)
             .then(res => res.json())
             .then(data => {
                 const body = document.getElementById(`body-${endpoint}`);
@@ -76,16 +67,14 @@
                     if(endpoint === 'customers') {
                         body.innerHTML += `<tr><td>${item.name}</td><td>${item.identification}</td><td>${item.status?'Activo':'Inactivo'}</td></tr>`;
                     } else if(endpoint === 'accounts') {
-                        body.innerHTML += `<tr><td>${item.accountNumber}</td><td>${item.type}</td><td>$${item.initialBalance}</td><td>${item.status}</td></tr>`;
+                        // OJO: Cambiado de accountNumber a number según tu clase Account
+                        body.innerHTML += `<tr><td>${item.number}</td><td>${item.type}</td><td>$${item.balance}</td><td>${item.status?'Activo':'Inactivo'}</td></tr>`;
                     } else if(endpoint === 'movements') {
-                        body.innerHTML += `<tr><td>${item.date}</td><td>${item.type}</td><td>${item.value}</td><td>$${item.balance}</td></tr>`;
+                        body.innerHTML += `<tr><td>${new Date(item.date).toLocaleString()}</td><td>${item.type}</td><td>${item.value}</td><td>$${item.balance}</td></tr>`;
                     }
                 });
-            });
+            })
+            .catch(err => console.error("Error en fetch:", err));
     }
-
-    // Carga inicial
-    document.addEventListener('DOMContentLoaded', () => fetchData('customers'));
+    // ... resto de tu lógica de tabs ...
 </script>
-</body>
-</html>
