@@ -41,4 +41,7 @@ POST /movements
 GET /movements/filter?accountNumber=225487&startDate=2024-01-01T00:00:00&endDate=2026-12-31T23:59:59
 GET /movements/filter?accountNumber=496825&startDate=2024-01-01T00:00:00&endDate=2026-12-31T23:59:59
 
-
+5. Verificación General (Consultas GET)
+Listar Clientes: GET /customers
+Listar Cuentas: GET /accounts
+Historial Completo: GET /movements

@@ -8,12 +8,8 @@ servers:
 paths:
   /customers:
     post:
-      summary: POST Crear Jose Lema
-      responses:
-        '201':
-          description: Creado con éxito
+      summary: Crear nuevo cliente
       tags:
-        - Postman
         - Customers
       requestBody:
         content:
@@ -27,15 +23,13 @@ paths:
                   type: string
                 identification:
                   type: string
-                  format: utc-millisec
                 address:
                   type: string
                 phone:
                   type: string
-                  format: utc-millisec
                 password:
                   type: string
-                  format: utc-millisec
+                  format: password
                 status:
                   type: boolean
             example:
@@ -46,14 +40,21 @@ paths:
               phone: '098254785'
               password: '1234'
               status: true
-  /accounts:
-    post:
-      summary: POST Jose Lema - Ahorros
       responses:
         '201':
           description: Creado con éxito
+    get:
+      summary: Listar todos los clientes
       tags:
-        - Postman
+        - Customers
+      responses:
+        '200':
+          description: Consulta exitosa
+
+  /accounts:
+    post:
+      summary: Crear nueva cuenta
+      tags:
         - Accounts
       requestBody:
         content:
@@ -63,11 +64,10 @@ paths:
               properties:
                 number:
                   type: string
-                  format: color
                 type:
                   type: string
                 balance:
-                  type: integer
+                  type: number
                 status:
                   type: boolean
                 customerId:
@@ -77,15 +77,22 @@ paths:
               type: Ahorros
               balance: 2000
               status: true
-              customerId: 8
-  /movements:
-    post:
-      summary: POST retiro 478758
+              customerId: 1
       responses:
         '201':
           description: Creado con éxito
+    get:
+      summary: Listar todas las cuentas
       tags:
-        - Postman
+        - Accounts
+      responses:
+        '200':
+          description: Consulta exitosa
+
+  /movements:
+    post:
+      summary: Registrar movimiento
+      tags:
         - Movements
       requestBody:
         content:
@@ -95,51 +102,14 @@ paths:
               properties:
                 accountNumber:
                   type: string
-                  format: color
                 type:
                   type: string
                 value:
-                  type: integer
+                  type: number
             example:
               accountNumber: '478758'
               type: DEBIT
               value: 575
-  /movements/filter:
-    get:
-      summary: GET Movimientos fecha y usuario 225487
-      parameters:
-        - name: accountNumber
-          in: query
-          required: false
-          deprecated: false
-          schema: { }
-          example: '225487'
-        - name: startDate
-          in: query
-          required: false
-          deprecated: false
-          schema: { }
-          example: '2024-01-01T00:00:00'
-        - name: endDate
-          in: query
-          required: false
-          deprecated: false
-          schema: { }
-          example: '2026-12-31T23:59:59'
       responses:
-        '200':
-          description: Consulta exitosa
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-      tags:
-        - Postman
-        - List movements
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
+        '201':
+          description

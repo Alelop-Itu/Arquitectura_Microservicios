@@ -32,7 +32,6 @@ public class MovementServiceTest {
 
     @Test
     void testCreateDebitWithInsufficientBalanceThrowsException() {
-        // 1. Configuración: Cuenta con saldo de 100
         Account account = new Account();
         account.setNumber("478758");
         account.setBalance(new BigDecimal("100.00"));
@@ -44,7 +43,6 @@ public class MovementServiceTest {
 
         when(accountRepository.findByNumber("478758")).thenReturn(Optional.of(account));
 
-        // 2. Ejecución y Verificación de la Excepción F3
         StepVerifier.create(movementService.createMovement(dto))
                 .expectError(InsufficientBalanceException.class)
                 .verify();
@@ -52,7 +50,6 @@ public class MovementServiceTest {
 
     @Test
     void testCreateCreditUpdatesBalanceCorrectly() {
-        // 1. Configuración: Cuenta con saldo de 2000
         Account account = new Account();
         account.setNumber("225487");
         account.setBalance(new BigDecimal("2000.00"));
@@ -65,7 +62,6 @@ public class MovementServiceTest {
         when(accountRepository.findByNumber("225487")).thenReturn(Optional.of(account));
         when(movementRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
 
-        // 2. Ejecución y Verificación del nuevo saldo (2600)
         StepVerifier.create(movementService.createMovement(dto))
                 .assertNext(res -> {
                     assertEquals(new BigDecimal("2600.00"), res.getBalance());
