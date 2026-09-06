@@ -1,6 +1,6 @@
-package com.bank.app.domain.model;
+package com.bank.app.infrastructure.persistence.entity;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -10,14 +10,16 @@ import lombok.experimental.SuperBuilder;
 @Data
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
+@Entity
+@Table(name = "customers")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Customer extends Person {
+public class CustomerEntity extends PersonEntity {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "La contraseña es obligatoria")
     private String password;
-
     private Boolean status;
 }

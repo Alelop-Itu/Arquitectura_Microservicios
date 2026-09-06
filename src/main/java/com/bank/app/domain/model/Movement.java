@@ -1,44 +1,31 @@
 package com.bank.app.domain.model;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
-@Entity
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "movements")
 public class Movement {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Column(nullable = false)
-    private LocalDateTime date;
 
+    private Long id;
+    private LocalDateTime date;
     private String type;
 
-    @Column(name = "value", nullable = false)
+    @NotNull(message = "El valor del movimiento es obligatorio")
     private BigDecimal value;
 
-    @Column(nullable = false)
+    @NotNull(message = "El saldo es obligatorio")
     private BigDecimal balance;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "account_id", nullable = false)
-    @JsonIgnoreProperties("customer")
-    @ToString.Exclude
+    @NotNull(message = "La cuenta asociada es obligatoria")
     private Account account;
-
-    @PrePersist
-    protected void onCreate() {
-        if (this.date == null) this.date = LocalDateTime.now();
-    }
 }

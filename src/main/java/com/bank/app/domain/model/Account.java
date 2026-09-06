@@ -1,35 +1,33 @@
 package com.bank.app.domain.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import java.math.BigDecimal;
 
 @Data
-@Entity
-@Table(name = "accounts")
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Account {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "account_number", unique = true, nullable = false)
+    @NotBlank(message = "El número de cuenta es obligatorio")
     private String number;
+
+    @NotBlank(message = "El tipo de cuenta es obligatorio")
     private String type;
 
-    @Column(name = "balance", nullable = false)
+    @NotNull(message = "El saldo es obligatorio")
+    @PositiveOrZero(message = "El saldo debe ser mayor o igual a cero")
     private BigDecimal balance;
+
     private Boolean status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id")
-    @JsonIgnore
-    @ToString.Exclude
     private Customer customer;
 }

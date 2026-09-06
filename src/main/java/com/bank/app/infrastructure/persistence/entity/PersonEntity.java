@@ -1,6 +1,9 @@
-package com.bank.app.domain.model;
+package com.bank.app.infrastructure.persistence.entity;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,15 +11,16 @@ import lombok.experimental.SuperBuilder;
 
 @Data
 @SuperBuilder
+@MappedSuperclass
 @NoArgsConstructor
 @AllArgsConstructor
-public class Person {
+public abstract class PersonEntity {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long personId;
 
-    @NotBlank(message = "El nombre es obligatorio")
     private String name;
-
     private String gender;
     private Integer age;
     private String identification;
