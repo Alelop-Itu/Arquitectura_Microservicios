@@ -2,7 +2,7 @@ package com.bank.app.infrastructure.controller;
 
 
 import com.bank.app.application.dto.MovementDTO;
-import com.bank.app.domain.service.MovementService;
+import com.bank.app.application.service.MovementService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,6 +1,5 @@
 package com.bank.app.domain.model;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,10 +13,6 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class Customer extends Person {
 
-    private Long id;
-
-    @NotBlank(message = "La contraseña es obligatoria")
     private String password;
-
     private Boolean status;
 }

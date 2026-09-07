@@ -1,11 +1,14 @@
-package com.bank.app.application.service;
+package com.bank.app.application.service.impl;
 
 import com.bank.app.application.dto.AccountDTO;
+import com.bank.app.application.service.AccountService;
+import com.bank.app.common.exception.AccountNotFoundException;
+import com.bank.app.common.exception.CustomerNotFoundException;
 import com.bank.app.domain.model.Account;
 import com.bank.app.domain.model.Customer;
 import com.bank.app.domain.repository.AccountRepository;
 import com.bank.app.domain.repository.CustomerRepository;
-import com.bank.app.domain.service.AccountService;
+import com.bank.app.infrastructure.mapper.AccountMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -22,37 +25,34 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Mono<AccountDTO> save(AccountDTO dto) {
         return Mono.fromCallable(() -> {
+            Customer customer = customerRepository.findById(dto.getCustomerId())
+                    .orElseThrow(() -> new CustomerNotFoundException(dto.getCustomerId()));
+
             Account account = new Account();
             account.setNumber(dto.getNumber());
             account.setType(dto.getType());
             account.setBalance(dto.getBalance());
             account.setStatus(dto.getStatus());
-
-            Customer customer = customerRepository.findById(dto.getCustomerId())
-                    .orElseThrow(() -> new RuntimeException("Error: El cliente con ID " + dto.getCustomerId() + " no existe."));
             account.setCustomer(customer);
-            customerRepository.findById(dto.getCustomerId())
-                    .ifPresent(account::setCustomer);
 
-            accountRepository.save(account);
-            return dto;
+            Account saved = accountRepository.save(account);
+            return AccountMapper.toDto(saved);
         }).subscribeOn(Schedulers.boundedElastic());
     }
 
     @Override
     public Flux<AccountDTO> findAll() {
-        return Flux.defer(() -> Flux.fromIterable(accountRepository.findAll()))
-                .map(a -> new AccountDTO(a.getNumber(), a.getType(), a.getBalance(), a.getStatus(),
-                        a.getCustomer() != null ? a.getCustomer().getId() : null))
+        return Mono.fromCallable(accountRepository::findAll)
+                .flatMapMany(Flux::fromIterable)
+                .map(AccountMapper::toDto)
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
     @Override
     public Mono<AccountDTO> findByNumber(String number) {
-        return Mono.fromCallable(() -> accountRepository.findByNumber(number))
-                .flatMap(opt -> opt.map(a -> Mono.just(new AccountDTO(a.getNumber(), a.getType(), a.getBalance(), a.getStatus(),
-                                a.getCustomer() != null ? a.getCustomer().getId() : null)))
-                        .orElse(Mono.empty()))
+        return Mono.fromCallable(() -> accountRepository.findByNumber(number)
+                        .orElseThrow(() -> new AccountNotFoundException(number)))
+                .map(AccountMapper::toDto)
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
@@ -60,21 +60,23 @@ public class AccountServiceImpl implements AccountService {
     public Mono<AccountDTO> update(String number, AccountDTO dto) {
         return Mono.fromCallable(() -> {
             Account account = accountRepository.findByNumber(number)
-                    .orElseThrow(() -> new RuntimeException("Account not found"));
+                    .orElseThrow(() -> new AccountNotFoundException(number));
+
             account.setType(dto.getType());
             account.setStatus(dto.getStatus());
             account.setBalance(dto.getBalance());
-            accountRepository.save(account);
-            return dto;
+
+            Account updated = accountRepository.save(account);
+            return AccountMapper.toDto(updated);
         }).subscribeOn(Schedulers.boundedElastic());
     }
 
     @Override
     public Mono<Void> delete(String number) {
-        return Mono.fromRunnable(() -> {
-            Account account = accountRepository.findByNumber(number)
-                    .orElseThrow(() -> new RuntimeException("Account not found"));
-            accountRepository.delete(account);
-        }).subscribeOn(Schedulers.boundedElastic()).then();
+        return Mono.fromCallable(() -> accountRepository.findByNumber(number)
+                        .orElseThrow(() -> new AccountNotFoundException(number)))
+                .doOnNext(account -> accountRepository.deleteByNumber(number))
+                .subscribeOn(Schedulers.boundedElastic())
+                .then();
     }
 }

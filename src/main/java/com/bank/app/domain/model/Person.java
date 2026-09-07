@@ -1,6 +1,5 @@
 package com.bank.app.domain.model;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,11 +11,8 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class Person {
 
-    private Long personId;
-
-    @NotBlank(message = "El nombre es obligatorio")
+    private Long id;
     private String name;
-
     private String gender;
     private Integer age;
     private String identification;

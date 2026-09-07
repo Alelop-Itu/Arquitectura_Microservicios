@@ -18,3 +18,7 @@ INSERT INTO movements (id, date, type, value, balance, account_id) VALUES (2, '2
 INSERT INTO movements (id, date, type, value, balance, account_id) VALUES (3, '2022-02-08 11:00:00', 'Crédito', 150, 150, 3);
 -- Marianela Montalvo (Cta 496825): Retiro de 540 (Saldo inicial 540 -> 0)
 INSERT INTO movements (id, date, type, value, balance, account_id) VALUES (4, '2022-02-08 12:00:00', 'Débito', -540, 0, 4);
+
+SELECT setval('customers_id_seq', (SELECT MAX(id) FROM customers));
+SELECT setval('accounts_id_seq', (SELECT MAX(id) FROM accounts));
+SELECT setval('movements_id_seq', (SELECT MAX(id) FROM movements));

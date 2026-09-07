@@ -1,5 +1,6 @@
-package com.bank.app.application.mapper;
+package com.bank.app.infrastructure.mapper;
 
+import com.bank.app.application.dto.MovementDTO;
 import com.bank.app.domain.model.Movement;
 import com.bank.app.infrastructure.persistence.entity.MovementEntity;
 
@@ -27,5 +28,17 @@ public class MovementMapper {
                 .balance(domain.getBalance())
                 .account(AccountMapper.toEntity(domain.getAccount()))
                 .build();
+    }
+
+    public static MovementDTO toDto(Movement domain) {
+        if (domain == null) return null;
+        return new MovementDTO(
+                domain.getId(),
+                domain.getDate(),
+                domain.getType(),
+                domain.getValue(),
+                domain.getBalance(),
+                domain.getAccount() != null ? domain.getAccount().getNumber() : null
+        );
     }
 }

@@ -1,6 +1,7 @@
 package com.bank.app.application.service;
 
 import com.bank.app.application.dto.MovementDTO;
+import com.bank.app.application.service.impl.MovementServiceImpl;
 import com.bank.app.common.exception.InsufficientBalanceException;
 import com.bank.app.domain.model.Account;
 import com.bank.app.domain.repository.AccountRepository;

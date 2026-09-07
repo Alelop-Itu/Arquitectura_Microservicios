@@ -2,6 +2,7 @@ package com.bank.app.application.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,6 +18,7 @@ public class MovementDTO {
     private Long id;
     private LocalDateTime date;
     @NotBlank(message = "El tipo de movimiento es obligatorio")
+    @Pattern(regexp = "(?i)Débito|Retiro|Crédito", message = "El tipo debe ser Débito, Retiro o Crédito")
     private String type;
     @NotNull(message = "El valor es obligatorio")
     @Positive(message = "El valor debe ser mayor a cero")

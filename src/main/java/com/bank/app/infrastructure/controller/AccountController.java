@@ -1,7 +1,7 @@
 package com.bank.app.infrastructure.controller;
 
 import com.bank.app.application.dto.AccountDTO;
-import com.bank.app.domain.service.AccountService;
+import com.bank.app.application.service.AccountService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

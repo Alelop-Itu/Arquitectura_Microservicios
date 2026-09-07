@@ -1,5 +1,6 @@
-package com.bank.app.application.mapper;
+package com.bank.app.infrastructure.mapper;
 
+import com.bank.app.application.dto.CustomerDTO;
 import com.bank.app.domain.model.Customer;
 import com.bank.app.infrastructure.persistence.entity.CustomerEntity;
 
@@ -9,7 +10,6 @@ public class CustomerMapper {
         if (entity == null) return null;
         return Customer.builder()
                 .id(entity.getId())
-                .personId(entity.getPersonId())
                 .name(entity.getName())
                 .gender(entity.getGender())
                 .age(entity.getAge())
@@ -25,7 +25,6 @@ public class CustomerMapper {
         if (domain == null) return null;
         return CustomerEntity.builder()
                 .id(domain.getId())
-                .personId(domain.getPersonId())
                 .name(domain.getName())
                 .gender(domain.getGender())
                 .age(domain.getAge())
@@ -35,5 +34,33 @@ public class CustomerMapper {
                 .password(domain.getPassword())
                 .status(domain.getStatus())
                 .build();
+    }
+
+    public static Customer toDomain(CustomerDTO dto) {
+        if (dto == null) return null;
+        return Customer.builder()
+                .id(dto.getId())
+                .name(dto.getName())
+                .gender(dto.getGender())
+                .identification(dto.getIdentification())
+                .address(dto.getAddress())
+                .phone(dto.getPhone())
+                .password(dto.getPassword())
+                .status(dto.getStatus())
+                .build();
+    }
+
+    public static CustomerDTO toDto(Customer domain) {
+        if (domain == null) return null;
+        return new CustomerDTO(
+                domain.getId(),
+                domain.getName(),
+                domain.getGender(),
+                domain.getIdentification(),
+                domain.getAddress(),
+                domain.getPhone(),
+                null,
+                domain.getStatus()
+        );
     }
 }

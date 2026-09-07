@@ -16,8 +16,9 @@ public class CustomerDTO {
     @NotBlank(message = "El nombre es obligatorio")
     private String name;
     private String gender;
-    private String identification;
     @NotBlank(message = "La identificación es obligatoria")
+    private String identification;
+    @NotBlank(message = "La dirección es obligatoria")
     private String address;
     private String phone;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

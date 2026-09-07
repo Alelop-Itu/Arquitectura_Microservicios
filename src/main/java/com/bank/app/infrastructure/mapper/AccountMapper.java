@@ -1,5 +1,6 @@
-package com.bank.app.application.mapper;
+package com.bank.app.infrastructure.mapper;
 
+import com.bank.app.application.dto.AccountDTO;
 import com.bank.app.domain.model.Account;
 import com.bank.app.infrastructure.persistence.entity.AccountEntity;
 
@@ -27,5 +28,16 @@ public class AccountMapper {
                 .status(domain.getStatus())
                 .customer(CustomerMapper.toEntity(domain.getCustomer()))
                 .build();
+    }
+
+    public static AccountDTO toDto(Account domain) {
+        if (domain == null) return null;
+        return new AccountDTO(
+                domain.getNumber(),
+                domain.getType(),
+                domain.getBalance(),
+                domain.getStatus(),
+                domain.getCustomer() != null ? domain.getCustomer().getId() : null
+        );
     }
 }
