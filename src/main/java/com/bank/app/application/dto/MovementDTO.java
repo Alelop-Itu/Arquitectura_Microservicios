@@ -27,3 +27,4 @@ public class MovementDTO {
     @NotBlank(message = "El número de cuenta es obligatorio")
     private String accountNumber;
 }
+
